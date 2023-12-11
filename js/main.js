@@ -27,9 +27,9 @@ function resize_block() {
     画面に合わせてドット、キャンバスの大きさを設定する
     */
 
-    //画面が縦長なら横100%
+    //画面が縦長なら横90%
     if (window.innerHeight > window.innerWidth) {
-        blockSize = Math.floor(window.innerWidth / boardCol);
+        blockSize = Math.floor(window.innerWidth / boardCol * 0.9);
     //横長なら縦1/2
     } else {
         blockSize = Math.floor(window.innerHeight / boardRow / 2);
