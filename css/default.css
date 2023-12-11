@@ -2,7 +2,7 @@
 
 /*スマホの拡大縮小移動禁止*/
 html{
-    touch-action: none;
+    touch-action: manipulation;
 }
 
 /*全体に余白をつける*/
