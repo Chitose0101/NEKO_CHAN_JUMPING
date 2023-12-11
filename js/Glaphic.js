@@ -15,6 +15,13 @@ class Glaphic {
         this.blockSize = blockSize;
     }
 
+    set_blockSize(blockSize) {
+        /*
+        blockSizeのセッター
+        */
+        this.blockSize = blockSize;
+    }
+
     draw_entity(entity, ctx) {
         /*
         エンティティを塗るためのメソッド
