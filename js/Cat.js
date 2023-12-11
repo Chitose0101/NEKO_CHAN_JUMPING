@@ -12,6 +12,8 @@ class Cat extends Entity{
         super(display_height, display_width, x, y);
         //ﾈｺﾁｬﾝ生成から何フレーム経過したか
         this.timer = 0
+        //ジャンプ中か
+        this.is_jumping = false;
         //ジャンプしてから何フレーム経過したか
         this.jump_timer = 0;
     }
@@ -20,8 +22,8 @@ class Cat extends Entity{
         /*
         ジャンプ
         */
-        if (this.jump_timer == 0) {
-            this.jump_timer = 1;
+        if (this.is_jumping == false) {
+            this.is_jumping = true;
         }
     }
 
@@ -43,8 +45,8 @@ class Cat extends Entity{
         jump_timerの更新
         */
 
-        //もしjump_timer==0なら更新しない
-        if (this.jump_timer == 0) {
+        //もしジャンプ中でなければなら更新しない
+        if (this.is_jumping == false) {
             return
         }
         
@@ -55,6 +57,7 @@ class Cat extends Entity{
         //そうでなければ、0
         } else {
             this.jump_timer = 0;
+            this.is_jumping = false;
         }
     }
 

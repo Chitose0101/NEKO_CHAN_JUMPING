@@ -21,6 +21,8 @@ const glaphic = new Glaphic(boardRow, boardCol, blockSize);
 
 //待機画面か
 is_standby = true;
+//ジャンプ待機中か
+is_waiting_jump = false;
 
 function resize_block() {
     /*
@@ -29,7 +31,7 @@ function resize_block() {
 
     //画面が縦長なら横90%
     if (window.innerHeight > window.innerWidth) {
-        blockSize = Math.floor(window.innerWidth / boardCol * 0.9);
+        blockSize = Math.floor(window.innerWidth / boardCol * 0.8);
     //横長なら縦1/2
     } else {
         blockSize = Math.floor(window.innerHeight / boardRow / 2);
@@ -57,8 +59,7 @@ function click_event() {
 
     //もしゲームが開始していれば、ジャンプする
     if (game.is_running) {
-        game.jump()
-        return
+        is_waiting_jump = true;
     //そうでなければ、
     } else {
         //ゲームオーバーから0.5秒経っていたら
@@ -80,6 +81,12 @@ function flame_event() {
     //ゲームが開始していなければ、なにもしない
     if (!game.is_running) {
         return
+    }
+
+    //ジャンプする
+    if (is_waiting_jump == true) {
+        game.jump();
+        is_waiting_jump = false
     }
 
     //ゲーム進行
