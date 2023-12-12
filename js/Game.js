@@ -15,7 +15,7 @@ class Game {
         //ゲームオーバーのタイムスタンプ
         this.gameover_timestump = Date.now();
 
-        this.reset()
+        this.reset();
     }
 
     reset() {
@@ -28,7 +28,7 @@ class Game {
 
         //ﾈｺﾁｬﾝ配置
         this.cat = new Cat(this.height, this.width, 16);
-        this.entities.push(this.cat)
+        this.entities.push(this.cat);
 
         //敵配置
         this.enemies = [];
@@ -59,13 +59,38 @@ class Game {
         ゲームを開始する
         */
         this.is_running = true;
+        //最初は花を走らせる
+        this.enemies[0].run();
     }
 
     jump(){
         /*
         ﾈｺﾁｬﾝがジャンプする
         */
-        this.cat.jump()
+        this.cat.jump();
+    }
+
+    count() {
+        /*
+        ゲーム進行
+        */
+
+        //新しく敵を走らせる
+        this.run_enemies();
+
+        //すべてのエンティティに対して、フレームごとの処理をさせる
+        for (let i = 0; i < this.entities.length; i++) {
+            this.entities[i].count();
+        }
+
+        //スコア更新
+        this.score = parseInt(this.timer/6);
+
+        //レベルアップ
+        this.level_up();
+
+        //タイマー更新
+        this.timer ++;
     }
 
     run_enemies(){
@@ -75,10 +100,10 @@ class Game {
 
         //もし近くに走る敵があれば走らない
         for (let i = 0; i < this.enemies.length; i++) {
-            let interval = this.cat.width * 2 + this.enemies[i].width * this.level;
+            let interval = this.cat.collider_width * 2 + this.enemies[i].collider_width * this.level;
             if (this.enemies[i].is_running) {
-                if (this.width - this.enemies[i].x < interval  + this.enemies[i].width) {
-                    return
+                if (this.width - this.enemies[i].x < interval  + this.enemies[i].collider_width) {
+                    return;
                 }
             }   
         }
@@ -89,7 +114,7 @@ class Game {
                 let random = Math.random();
                 if (random * probabillity < 1) {
                     this.enemies[i].run();
-                    return
+                    return;
                 }
             }
     }
@@ -101,12 +126,12 @@ class Game {
 
         //レベル10まで
         if (this.level >= 10) {
-            return
+            return;
         }
 
         //200ごとにレベルアップ
         if (this.timer % 600 > 0) {
-            return
+            return;
         }
 
         //レベル増加
@@ -117,37 +142,14 @@ class Game {
         }
     }
 
-    count() {
-        /*
-        ゲーム進行
-        */
-
-        //新しく敵を走らせる
-        this.run_enemies()
-
-        //すべてのエンティティに対してコライダー更新
-        for (let i = 0; i < this.entities.length; i++) {
-            this.entities[i].update_collider();
-        }
-
-        //スコア更新
-        this.score = parseInt(this.timer/6)
-
-        //レベルアップ
-        this.level_up();
-
-        //タイマー更新
-        this.timer ++;
-    }
-
     is_over() {
         /*
         ゲームオーバーか判定
         */
 
         //すべてのﾈｺﾁｬﾝ座標について
-        for (let y = this.cat.y; y < this.cat.y + this.cat.height; y++) {
-            for (let x = this.cat.x; x < this.cat.x + this.cat.width; x++) {
+        for (let y = this.cat.y; y < this.cat.y + this.cat.collider_height; y++) {
+            for (let x = this.cat.x; x < this.cat.x + this.cat.collider_width; x++) {
                 //ﾈｺﾁｬﾝがいるか
                 if (this.cat.exists(x,y)){
                     //すべての敵について
@@ -160,7 +162,7 @@ class Game {
                 }
             }
         }
-        return false
+        return false;
     }
 
     gameover() {

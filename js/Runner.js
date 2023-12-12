@@ -1,15 +1,14 @@
 class Runner extends Entity{
     /*
-    敵の親クラス
+    走るものの親クラス
     */
 
     constructor(display_height, display_width, x, y) {
         /*
         コントラスタ
         */
-        
-        //親コントラスタの呼び出し
         super(display_height, display_width, x, y);
+
         //走っているか
         this.is_running = false;
         //走る速さ
@@ -18,34 +17,40 @@ class Runner extends Entity{
 
     set_speed(v){
         /*
-        速さの変更
-        v:変更後の速さ
+        走る速さのセッター
         */
         this.speed = v;
     }
     
     run(){
         /*
-        走り出す
+        元の位置に戻って走り出す
         */
-        if (this.is_running == false) {
-            this.is_running = true;
+
+        //もし既に走っていたら何もしない
+        if (this.is_running) {
+            return;
         }
+
+        this.x = this.display_width;
+        this.is_running = true;
     }
 
     stop() {
         /*
-        元の位置に戻って止まる
+        止まる
         */
-        this.x = this.display_width;
         this.is_running = false;
     }
 
-    update_collider() {
+    count() {
         /*
-        コライダーの更新
+        フレームごとの処理
+        親クラスのオーバーライド
         */
+        super.count();
 
+        //走っていなければ何もしない
         if (this.is_running == false) {
             return
         }
@@ -53,9 +58,9 @@ class Runner extends Entity{
         //x座標の更新
         this.x -= this.speed;
 
+        //画面外まで出たら止まる
         if (this.x + this.width < 0) {
-            //元の位置に戻って止まる
-            this.stop()
+            this.stop();
         }
     }
     

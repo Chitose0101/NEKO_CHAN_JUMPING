@@ -10,58 +10,60 @@ class Chars extends Entity{
         size:文字の大きさ
         */
         
-        super(display_height, display_width, x, y);
-        this.src = src;
-        this.set_char();
-        this.reset_collider();
+        super(display_height, display_width, x, y, src);
     }
     
-    reset_collider () {
+    set_xy(x,y) {
         /*
-        コライダーの設定
+        xyのセッター
         */
-        this.height = 6;
-        this.width = 6 * this.src.length - 1;
+        this.x = x;
+        this.y = y;
+    }
 
-        //文字列によらずコライダーは空
-        this.collider = new Array(this.height);
-        for (let y = 0; y < this.height; y++) {
-            this.collider[y] = new Array(this.width);
-            for (let x = 0; x < this.width; x++) {
-                this.collider[y][x] = 0
-            }
-        }
+    init_animation (src) {
+        /*
+        アニメーションの設定
+        親クラスのオーバーライド
+        */
+        this.animation_height = 6;
+        this.animation_width = 6 * src.length - 1;
 
-        //文字列によってスキンを変える。
-        this.skin = new Array(this.height);
-        for (let y = 0; y < this.height; y++) {
-            this.skin[y] = new Array(this.width);
-            for (let x = 0; x < this.width; x++) {
+        //文字ドットの定義
+        this.init_char();
+
+        //文字列によって見た目を変える。
+        this.animation = [new Array(this.animation_height)];
+        for (let y = 0; y < this.animation_height; y++) {
+            this.animation[0][y] = new Array(this.animation_width);
+            for (let x = 0; x < this.animation_width; x++) {
 
                 //xを6で割った商と余りをq,rに格納
                 let q = Math.floor(x/6);
                 let r = x % 6;
                 //余りが5なら空
                 if (r == 5) {
-                    this.skin[y][x] = 0;
+                    this.animation[0][y][x] = 0;
                 //そうでないときはcharを参考に
                 } else {
-                    let src_char = this.src.charAt(q);
-                    this.skin[y][x] = this.char[src_char][y][r];
+                    let src_char = src.charAt(q);
+                    this.animation[0][y][x] = this.char[src_char][y][r];
                 }
             }
         }
     }
 
-    set_xy(x,y) {
+    init_collider() {
         /*
-        x,yのセッター
+        コライダーの設定
+        親クラスのオーバーライド
         */
-        this.x = x;
-        this.y = y;
+        this.collider_height = 0;
+        this.collider_width = 0;
+        this.collider = [[[]]];
     }
 
-    set_char() {
+    init_char() {
         /*
         ただ文字の定義なんだけど、長いから最後に回した
         */
@@ -401,6 +403,6 @@ class Chars extends Entity{
                 [0,0,0,0,0],
             ],
 
-        }
+        };
     }
 }

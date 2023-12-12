@@ -29,8 +29,8 @@ class Glaphic {
         ctx:コンテキストオブジェクト
         */
         //xy座標について
-        for (let y = entity.y; y < entity.y + entity.height; y++) {
-            for (let x = entity.x; x < entity.x + entity.width; x++) {
+        for (let y = entity.y; y < entity.y + entity.animation_height; y++) {
+            for (let x = entity.x; x < entity.x + entity.animation_width; x++) {
 
                 let color = entity.color(x,y);
                 //黒
