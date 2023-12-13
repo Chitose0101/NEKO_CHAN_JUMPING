@@ -55,7 +55,7 @@ class EntityManager {
         }
 
         //新しい敵がいればリストに追加
-        if (new_enemy != null) {
+        if (new_enemy instanceof Runner) {
             new_enemy.run()
             updated_enemies.push(new_enemy); 
         }
