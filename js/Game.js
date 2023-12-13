@@ -94,7 +94,15 @@ class Game {
         /*
         ゲームオーバーか判定
         */
-        return this.entities.is_cat_killed();
+        const killer = this.entities.is_cat_killed()
+        if (killer == false) {
+            return false;
+        }
+        //もしﾈｺﾁｬﾝどうしだったら、ハートをつける
+        if (killer instanceof EnemyCat){
+            this.entities.add_heart();
+        }
+        return true;
     }
 
     gameover() {

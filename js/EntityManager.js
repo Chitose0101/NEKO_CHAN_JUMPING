@@ -95,7 +95,9 @@ class EntityManager {
         //どの敵を生成するか決める
         random = Math.random();
         let new_enemy = null;
-        if (random < 0.2) {
+        if (random < 0.01) {
+            new_enemy = new EnemyCat(this.height,this.width);
+        } else if (random < 0.25) {
             new_enemy = new Bird(this.height, this.width);
         } else {
             new_enemy = new Flower(this.height, this.width);
@@ -118,12 +120,26 @@ class EntityManager {
                     for (let i = 0; i < this.enemies.length; i++) {
                         //敵がいるか
                         if (this.enemies[i].exists(x,y)){
-                            return true;                  
+                            return this.enemies[i];                  
                         }
                     }
                 }
             }
         }
         return false;
+    }
+
+    add_heart() {
+        /*
+        ﾈｺﾁｬﾝの上にハートを出す
+        */
+
+        //*はハートに変換される
+        const heart = new Chars(this.height, this.width, "*");
+        heart.set_xy(
+            this.cat.x + this.cat.animation_width - 5,
+            this.cat.y - heart.animation_height + 2
+            );
+        this.entities.push(heart);
     }
 }

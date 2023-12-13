@@ -87,12 +87,15 @@ function flame_event() {
     glaphic.draw(game.entities.entities, ctx);
 
     //ゲームオーバーの処理
-    if (game.is_over()){
+    const is_gameover = game.is_over()
+    if (is_gameover){
         game.gameover();
+        //再描画
+        glaphic.draw(game.entities.entities, ctx);
     }
 
     //スコア描画
-    glaphic.draw_info(game.level, game.score, game.is_over(), ctx);
+    glaphic.draw_info(game.level, game.score, is_gameover, ctx);
 }
 
 function init() {
