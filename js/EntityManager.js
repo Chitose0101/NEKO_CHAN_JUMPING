@@ -80,7 +80,7 @@ class EntityManager {
             let interval = this.cat.collider_width * 2.5 + this.enemies[i].collider_width * level;
             if (this.enemies[i].is_running) {
                 if (this.width - this.enemies[i].x < interval  + this.enemies[i].collider_width) {
-                    return null;
+                    return;
                 }
             }   
         }
@@ -89,7 +89,7 @@ class EntityManager {
         let probabillity = 1/30;
         let random = Math.random();
         if (random > probabillity) {
-            return null;
+            return;
         }
 
         //どの敵を生成するか決める
