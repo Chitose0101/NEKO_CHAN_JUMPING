@@ -97,7 +97,7 @@ class EntityManager {
         let new_enemy = null;
         if (random < 0.01) {
             new_enemy = new EnemyCat(this.height,this.width);
-        } else if (random < 0.25) {
+        } else if (random < 0.21) {
             new_enemy = new Bird(this.height, this.width);
         } else {
             new_enemy = new Flower(this.height, this.width);
