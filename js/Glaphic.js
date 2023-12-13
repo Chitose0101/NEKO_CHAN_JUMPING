@@ -81,14 +81,14 @@ class Glaphic {
         }
         score_string += String(score);
         
-        let level_and_score = new Chars(this.boardRow, this.boardCol, 0, 0,
+        let level_and_score = new Chars(this.boardRow, this.boardCol,
             "LEVEL" + String(level) + " SCORE " + score_string);
         //右上揃えにする
         level_and_score.set_xy(this.boardCol - level_and_score.width, 0);
         this.draw_entity(level_and_score, ctx);
 
         if (gameover) {
-            let gameover_chars = new Chars(this.boardRow, this.boardCol, 0, 0, "GAMEOVER");
+            let gameover_chars = new Chars(this.boardRow, this.boardCol, "GAMEOVER");
             //中央揃えにする
             gameover_chars.set_xy(
                 parseInt((this.boardCol - level_and_score.width * 0.5) * 0.5),
@@ -105,7 +105,7 @@ class Glaphic {
         */
 
 
-        let tap_to_start = new Chars(this.boardRow, this.boardCol, 0, 0, "TAP TO START");
+        let tap_to_start = new Chars(this.boardRow, this.boardCol, "TAP TO START");
         //右上揃えにする
         tap_to_start.set_xy(this.boardCol - tap_to_start.width, 0);
         this.draw_entity(tap_to_start, ctx);

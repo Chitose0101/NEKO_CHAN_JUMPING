@@ -3,14 +3,14 @@ class Chars extends Entity{
     文字列のクラス
     */
 
-    constructor(display_height, display_width, x, y, src) {
+    constructor(display_height, display_width, src) {
         /*
         コントラスタ
         src:もととなる文字列
         size:文字の大きさ
         */
         
-        super(display_height, display_width, x, y, src);
+        super(display_height, display_width, undefined, src);
     }
     
     set_xy(x,y) {

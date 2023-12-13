@@ -3,10 +3,9 @@ class Entity {
     すべてのエンティティの親クラス
     */
 
-    constructor (display_height, display_width, x, y, args) {
+    constructor (display_height, display_width, xy, args) {
         /*
         コントラスタ
-        args:継承のときにうまいこと使ってください
         */
 
         //画面の大きさ
@@ -38,18 +37,13 @@ class Entity {
         this.height = Math.max(this.animation_height, this.collider_height);
         this.width = Math.max(this.animation_width, this.collider_width);
 
-        //生成位置x
-        if (x === undefined) {//もし指定がなければ画面外、右
-            this.x = this.display_width;
+        //生成位置
+        this.init_xy(args)
+        if (xy === undefined) {//もし指定がなければ画面外、右
+            this.reset_xy();
         } else {
-            this.x = x;
-        }
-
-        //生成位置y
-        if (y === undefined) {//もし指定がなければ画面内で一番下-1
-            this.y = this.display_height - this.height - 1;
-        } else {
-            this.y = y;
+            this.x = xy[0];
+            this.y = xy[1];
         }
     }
 
@@ -73,6 +67,23 @@ class Entity {
         this.collider = this.animation;
     }
 
+    init_xy(args) {
+        /*
+        xyの初期位置の設定
+        デフォルトは画面内一番下、画面外右
+        */
+        this.init_x = this.display_width;
+        this.init_y = this.display_height - this.height - 1;
+    }
+
+    reset_xy() {
+        /*
+        xyを初期位置に戻す
+        */
+        this.x = this.init_x;
+        this.y = this.init_y;
+    }
+
     count() {
         /*
         フレームごとの処理
@@ -81,10 +92,11 @@ class Entity {
         //タイマー更新
         this.timer++
 
+
         //アニメーションの更新
         if (this.animation_speed > 0) {//アニメーション速度が0なら何もしない
             for (let i = 0; i < this.animation.length; i++) {
-                if (this.timer % this.animation_speed * this.animation.length == this.animation_speed * i) {
+                if (this.timer % (this.animation_speed * this.animation.length) == this.animation_speed * i) {
                     this.current_frame = i;
                 }
             }

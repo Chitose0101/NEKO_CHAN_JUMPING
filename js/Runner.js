@@ -3,47 +3,26 @@ class Runner extends Entity{
     走るものの親クラス
     */
 
-    constructor(display_height, display_width, x, y) {
+    constructor(display_height, display_width, xy) {
         /*
         コントラスタ
         */
-        super(display_height, display_width, x, y);
+        super(display_height, display_width, xy);
 
         //走っているか
         this.is_running = false;
         //走る速さ
         this.speed = 0;
     }
-
-    set_speed(v){
-        /*
-        走る速さのセッター
-        */
-        this.speed = v;
-    }
     
-    run(){
+    run() {
         /*
         元の位置に戻って走り出す
         */
-
-        //もし既に走っていたら何もしない
-        if (this.is_running) {
-            return;
-        }
-
-        this.x = this.display_width;
         this.is_running = true;
     }
 
-    stop() {
-        /*
-        止まる
-        */
-        this.is_running = false;
-    }
-
-    count() {
+    count(level) {
         /*
         フレームごとの処理
         親クラスのオーバーライド
@@ -55,13 +34,10 @@ class Runner extends Entity{
             return
         }
 
+        //速さ更新
+        this.speed = level + 1;
+
         //x座標の更新
         this.x -= this.speed;
-
-        //画面外まで出たら止まる
-        if (this.x + this.width < 0) {
-            this.stop();
-        }
-    }
-    
+    }  
 }

@@ -3,16 +3,25 @@ class Cat extends Entity{
     ﾈｺﾁｬﾝのクラス
     */
 
-    constructor(display_height, display_width, x, y) {
+    constructor(display_height, display_width, xy) {
         /*
         コントラスタ
         */
-        super(display_height, display_width, x, y);
+        super(display_height, display_width, xy);
 
         //ジャンプ中か
         this.is_jumping = false;
         //ジャンプしてから何フレーム経過したか
         this.jump_timer = 0;
+    }
+
+    init_xy() {
+        /*
+        xyの初期位置の設定
+        親クラスのオーバーライド
+        */
+        super.init_xy()
+        this.init_x = 16;
     }
 
     jump() {

@@ -42,13 +42,12 @@ function resize_block() {
     glaphic.set_blockSize(blockSize);
 
     //再描画
-    glaphic.draw(game.entities, ctx);
+    glaphic.draw(game.entities.entities, ctx);
     if (is_standby == true) {
         glaphic.draw_tap_to_start(ctx);
     } else {
         glaphic.draw_info(game.level, game.score, game.is_over(), ctx);
     }
-
 }
 
 function click_event() {
@@ -58,7 +57,7 @@ function click_event() {
 
     //もしゲームが開始していれば、ジャンプする
     if (game.is_running) {
-        game.jump();
+        game.entities.cat.jump();
 
     } else {
         //ゲームオーバーから0.5秒経っていたら
@@ -85,7 +84,7 @@ function flame_event() {
     //ゲーム進行
     game.count();
     //描画
-    glaphic.draw(game.entities, ctx);
+    glaphic.draw(game.entities.entities, ctx);
 
     //ゲームオーバーの処理
     if (game.is_over()){
@@ -94,7 +93,6 @@ function flame_event() {
 
     //スコア描画
     glaphic.draw_info(game.level, game.score, game.is_over(), ctx);
-
 }
 
 function init() {
@@ -104,8 +102,6 @@ function init() {
 
     //キャンバスのリサイズ
     resize_block();
-    //tap_to_startの表示
-    glaphic.draw_tap_to_start(ctx);
 
     //リサイズイベントのバインド
     window.addEventListener("resize", resize_block);

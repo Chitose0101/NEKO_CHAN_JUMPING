@@ -40,12 +40,13 @@ class Bird extends Runner{
     鳥のクラス
     */
 
-    constructor(display_height, display_width, x, y) {
+    init_xy() {
         /*
-        コントラスタ
+        xyの初期位置の設定
+        親クラスのオーバーライド
         */
-        super(display_height, display_width, x, y);
-        this.y = 15;
+        super.init_xy()
+        this.init_y = 16;
     }
     
     init_animation() {
