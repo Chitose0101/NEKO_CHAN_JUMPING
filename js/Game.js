@@ -25,6 +25,8 @@ class Game {
 
         //ゲームが開始しているかのフラグ
         this.is_running = false;
+        //ゲームオーバーかどうかのフラグ
+        this.is_over = false;
 
         //ゲーム開始から何フレーム経過したか
         this.timer = 0;
@@ -95,12 +97,34 @@ class Game {
         this.level ++;
     }
 
-    is_over(return_killer=false) {
+    gameover() {
         /*
-        ゲームオーバーか判定
-        return_killerで、trueの代わりに誰がﾈｺﾁｬﾝを倒したか返す
+        ゲームオーバーのときの処理
         */
-        let killer =undefined;
+
+        //ゲームオーバーかどうかの更新、誰がﾈｺﾁｬﾝを倒したか
+        const killer = this.who_cat_kill()
+
+        //ゲームオーバーでなければ、何もしない
+        if (this.is_over == false) {
+            return;
+        }
+
+        //もしﾈｺﾁｬﾝどうしだったら、ハートをつける
+        if (killer instanceof EnemyCat){
+            this.entities.add_heart();
+        }
+
+        this.gameover_timestump = Date.now();
+        this.is_running = false;
+    }
+
+    who_cat_kill() {
+        /*
+        neﾈｺﾁｬﾝが誰に倒されたか判定する
+        is_overの更新
+        */
+        let killer = undefined;
         
         //すべてのﾈｺﾁｬﾝ座標について
         for (let y = this.entities.cat.y; y < this.entities.cat.y + this.entities.cat.collider_height; y++) {
@@ -118,33 +142,8 @@ class Game {
             }
         }
 
-        if (killer == undefined) {
-            return false;
-        }
-        if (return_killer) {
-            return killer;
-        }
-        return true;
+        this.is_over = killer != undefined;
+        return killer;
     }
 
-    gameover() {
-        /*
-        ゲームオーバーのときの処理
-        */
-
-        const killer = this.is_over(true)
-
-        //ゲームオーバーでなければ、何もしない
-        if (killer == false) {
-            return;
-        }
-
-        //もしﾈｺﾁｬﾝどうしだったら、ハートをつける
-        if (killer instanceof EnemyCat){
-            this.entities.add_heart();
-        }
-
-        this.gameover_timestump = Date.now();
-        this.is_running = false;
-    }
 }

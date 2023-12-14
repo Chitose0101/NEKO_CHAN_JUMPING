@@ -85,7 +85,7 @@ function draw() {
 
     //描画
     glaphic.draw_game(game.entities.entities, ctx);
-    glaphic.draw_info(game.level, game.score, standby, game.is_over(), ctx)
+    glaphic.draw_info(game.level, game.score, standby, game.is_over, ctx)
 }
 
 function init() {
