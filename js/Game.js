@@ -121,7 +121,7 @@ class Game {
 
     who_cat_kill() {
         /*
-        neﾈｺﾁｬﾝが誰に倒されたか判定する
+        ﾈｺﾁｬﾝが誰に倒されたか判定する
         is_overの更新
         */
         let killer = undefined;

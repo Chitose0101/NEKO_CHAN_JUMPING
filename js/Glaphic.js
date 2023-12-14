@@ -46,7 +46,7 @@ class Glaphic {
 
     draw_game(entities, ctx) {
         /*
-        画面を描写するメソッド
+        ゲーム画面を描写するメソッド
         entities:描くエンティティ
         ctx:コンテキストオブジェクト
         */
@@ -67,10 +67,11 @@ class Glaphic {
 
     draw_info(level, score, standby, is_gameover, ctx) {
         /*
-        下記情報を表示するメソッド
+        文字情報を表示するメソッド
         level:レベル
         score:スコア
-        gameover:ゲームオーバーかどうかbool
+        standby:待機状態かどうか
+        isgameover:ゲームオーバーかどうか
         ctx:コンテキストオブジェクト
         */
 
