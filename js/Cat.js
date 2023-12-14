@@ -15,22 +15,11 @@ class Jumper extends Entity{
         this.jump_timer = 0;
     }
 
-    init_xy() {
-        /*
-        xyの初期位置の設定
-        親クラスのオーバーライド
-        */
-        super.init_xy()
-        this.init_x = 16;
-    }
-
     jump() {
         /*
         ジャンプ
         */
-        if (this.is_jumping == false) {
-            this.is_jumping = true;
-        }
+        this.is_jumping = true;
     }
 
     jump_height(jump_timer=this.jump_timer) {
