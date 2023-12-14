@@ -10,8 +10,7 @@ const fps = 40;
 //キャンバスの取得
 const cvs = document.getElementById("cvs");
 //コンテキスト生成
-let ctx = cvs.getContext("2d");
-
+const ctx = cvs.getContext("2d");
 //仮のドットサイズ
 let blockSize = 1;
 
@@ -21,34 +20,7 @@ const game = new Game(boardRow, boardCol);
 const glaphic = new Glaphic(boardRow, boardCol, blockSize);
 
 //待機画面か
-is_standby = true;
-
-function resize_block() {
-    /*
-    画面に合わせてドット、キャンバスの大きさを設定する
-    */
-
-    //画面が縦長なら横90%
-    if (window.innerHeight > window.innerWidth) {
-        blockSize = Math.floor(window.innerWidth / boardCol * 0.8);
-    //横長なら縦1/2
-    } else {
-        blockSize = Math.floor(window.innerHeight / boardRow / 2);
-    }
-    cvs.height = blockSize * boardRow;
-    cvs.width = blockSize * boardCol;
-
-    //グラフィックのブロックサイズ更新
-    glaphic.set_blockSize(blockSize);
-
-    //再描画
-    glaphic.draw(game.entities.entities, ctx);
-    if (is_standby == true) {
-        glaphic.draw_tap_to_start(ctx);
-    } else {
-        glaphic.draw_info(game.level, game.score, game.is_over(), ctx);
-    }
-}
+let standby = true;
 
 function click_event() {
     /*
@@ -63,7 +35,7 @@ function click_event() {
         //ゲームオーバーから0.5秒経っていたら
         if (Date.now() - game.gameover_timestump > 500) {
             //待機画面解除
-            is_standby = false;
+            standby = false;
             //ゲームリセット、スタート
             game.reset();
             game.start();
@@ -71,7 +43,7 @@ function click_event() {
     }
 }
 
-function flame_event() {
+function count() {
     /*
     毎フレーム行われるイベント
     */
@@ -83,19 +55,37 @@ function flame_event() {
 
     //ゲーム進行
     game.count();
-    //描画
-    glaphic.draw(game.entities.entities, ctx);
 
     //ゲームオーバーの処理
-    const is_gameover = game.is_over()
-    if (is_gameover){
-        game.gameover();
-        //再描画
-        glaphic.draw(game.entities.entities, ctx);
-    }
+    game.gameover();
 
-    //スコア描画
-    glaphic.draw_info(game.level, game.score, is_gameover, ctx);
+    //描画
+    draw()
+}
+
+function draw() {
+    /*
+    キャンバスの描画
+    */
+
+    //ドットサイズ、キャンバスサイズの設定
+    if (window.innerHeight > window.innerWidth) {
+        blockSize = Math.floor(window.innerWidth / boardCol * 0.8);
+    } else {
+        blockSize = Math.floor(window.innerHeight / boardRow / 2);
+    }
+    if (blockSize < 1) {
+        blockSize = 1
+    }
+    cvs.height = blockSize * boardRow;
+    cvs.width = blockSize * boardCol;
+
+    //グラフィックのブロックサイズ更新
+    glaphic.set_blockSize(blockSize);
+
+    //描画
+    glaphic.draw_game(game.entities.entities, ctx);
+    glaphic.draw_info(game.level, game.score, standby, game.is_over(), ctx)
 }
 
 function init() {
@@ -103,17 +93,17 @@ function init() {
     読み込み完了と同時に走る関数
     */
 
-    //キャンバスのリサイズ
-    resize_block();
-
     //リサイズイベントのバインド
-    window.addEventListener("resize", resize_block);
+    window.addEventListener("resize", draw);
     //タップorクリックイベントのバインド
     const _click = (window.ontouchstart === undefined)? "mousedown" : "touchstart";
     window.addEventListener(_click, click_event);
 
+    //描画
+    draw();
+
     //インターバル開始
-    setInterval(flame_event, 1000/fps);
+    setInterval(count, 1000/fps);
 }
 
 window.onload = init();

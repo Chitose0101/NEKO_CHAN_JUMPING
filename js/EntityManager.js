@@ -1,6 +1,6 @@
 class EntityManager {
     /*
-    ゲーム内のエンティティを一任するクラス
+    ゲーム内のエンティティの管理
     */
 
     constructor(height, width) {
@@ -18,20 +18,6 @@ class EntityManager {
         this.enemies = [];
         //エンティティのリスト
         this.entities = [this.cat];
-    }
-
-    count(level) {
-        /*
-        フレームごとの処理
-        */
-
-        //敵リストの更新
-        this.update_enemies(level);
-
-        //各エンティティにフレームごとの処理をさせる
-        for (let i = 0; i < this.entities.length; i++) {
-            this.entities[i].count(level);
-        }
     }
 
     update_enemies(level) {
@@ -56,7 +42,6 @@ class EntityManager {
 
         //新しい敵がいればリストに追加
         if (new_enemy instanceof Runner) {
-            new_enemy.run()
             updated_enemies.push(new_enemy); 
         }
         
@@ -75,14 +60,12 @@ class EntityManager {
         敵を生成する
         */
         
-        //もし近くに走る敵がいれば、何もしない
+        //もし近くに敵がいれば、何もしない
         for (let i = 0; i < this.enemies.length; i++) {
             let interval = this.cat.collider_width * 2.5 + this.enemies[i].collider_width * level;
-            if (this.enemies[i].is_running) {
-                if (this.width - this.enemies[i].x < interval  + this.enemies[i].collider_width) {
-                    return;
-                }
-            }   
+            if (this.width - this.enemies[i].x < interval  + this.enemies[i].collider_width) {
+                return;
+            }
         }
 
         //敵を生成するか決める
@@ -104,29 +87,6 @@ class EntityManager {
         }
 
         return new_enemy;
-    }
-
-    is_cat_killed() {
-        /*
-        ﾈｺﾁｬﾝが敵に殺されたか判定
-        */
-
-        //すべてのﾈｺﾁｬﾝ座標について
-        for (let y = this.cat.y; y < this.cat.y + this.cat.collider_height; y++) {
-            for (let x = this.cat.x; x < this.cat.x + this.cat.collider_width; x++) {
-                //ﾈｺﾁｬﾝがいるか
-                if (this.cat.exists(x,y)){
-                    //すべての敵について
-                    for (let i = 0; i < this.enemies.length; i++) {
-                        //敵がいるか
-                        if (this.enemies[i].exists(x,y)){
-                            return this.enemies[i];                  
-                        }
-                    }
-                }
-            }
-        }
-        return false;
     }
 
     add_heart() {

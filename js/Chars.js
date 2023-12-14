@@ -21,16 +21,16 @@ class Chars extends Entity{
         this.y = y;
     }
 
-    init_animation (src) {
+    setting(src) {
         /*
-        アニメーションの設定
-        親クラスのオーバーライド
+        設定
         */
         this.animation_height = 6;
         this.animation_width = 6 * src.length - 1;
+        this.collider = [[[]]];
 
         //文字ドットの定義
-        this.init_char();
+        this.char_setting();
 
         //文字列によって見た目を変える。
         this.animation = [new Array(this.animation_height)];
@@ -53,17 +53,7 @@ class Chars extends Entity{
         }
     }
 
-    init_collider() {
-        /*
-        コライダーの設定
-        親クラスのオーバーライド
-        */
-        this.collider_height = 0;
-        this.collider_width = 0;
-        this.collider = [[[]]];
-    }
-
-    init_char() {
+    char_setting() {
         /*
         ただ文字の定義なんだけど、長いから最後に回した
         */

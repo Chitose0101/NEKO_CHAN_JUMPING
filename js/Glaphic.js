@@ -44,7 +44,7 @@ class Glaphic {
         }
     }
 
-    draw(entities, ctx) {
+    draw_game(entities, ctx) {
         /*
         画面を描写するメソッド
         entities:描くエンティティ
@@ -65,7 +65,7 @@ class Glaphic {
         }
     }
 
-    draw_info(level, score, gameover, ctx) {
+    draw_info(level, score, standby, is_gameover, ctx) {
         /*
         下記情報を表示するメソッド
         level:レベル
@@ -73,6 +73,27 @@ class Glaphic {
         gameover:ゲームオーバーかどうかbool
         ctx:コンテキストオブジェクト
         */
+
+
+        //待機画面のとき
+        if (standby) {
+            let tap_to_start = new Chars(this.boardRow, this.boardCol, "TAP TO START");
+            //右上揃えにする
+            tap_to_start.set_xy(this.boardCol - tap_to_start.width, 0);
+            this.draw_entity(tap_to_start, ctx);
+            return;
+        }
+
+        //ゲームオーバーのとき
+        if (is_gameover) {
+            let gameover_chars = new Chars(this.boardRow, this.boardCol, "GAMEOVER");
+            //中央揃えにする
+            gameover_chars.set_xy(
+                parseInt((this.boardCol - gameover_chars.width) * 0.5),
+                parseInt((this.boardRow - gameover_chars.height) * 0.5)
+                );
+            this.draw_entity(gameover_chars, ctx);
+        }
 
         //scoreの桁数調整
         let score_string = ""
@@ -86,29 +107,5 @@ class Glaphic {
         //右上揃えにする
         level_and_score.set_xy(this.boardCol - level_and_score.width, 0);
         this.draw_entity(level_and_score, ctx);
-
-        if (gameover) {
-            let gameover_chars = new Chars(this.boardRow, this.boardCol, "GAMEOVER");
-            //中央揃えにする
-            gameover_chars.set_xy(
-                parseInt((this.boardCol - level_and_score.width * 0.5) * 0.5),
-                parseInt((this.boardRow - level_and_score.height * 0.5) * 0.5)
-                );
-            this.draw_entity(gameover_chars, ctx);
-        }
-    }
-
-    draw_tap_to_start(ctx) {
-        /*
-        TAP_TO_STARTを点滅させる
-        ctx:コンテキストオブジェクト
-        */
-
-
-        let tap_to_start = new Chars(this.boardRow, this.boardCol, "TAP TO START");
-        //右上揃えにする
-        tap_to_start.set_xy(this.boardCol - tap_to_start.width, 0);
-        this.draw_entity(tap_to_start, ctx);
-        
     }
 }

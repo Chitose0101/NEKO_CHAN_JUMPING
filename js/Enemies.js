@@ -1,18 +1,42 @@
-//敵まとめ
+class Runner extends Entity{
+    /*
+    走るエンティティの親クラス
+    */
+
+    constructor(display_height, display_width, xy) {
+        /*
+        コントラスタ
+        */
+        super(display_height, display_width, xy);
+
+        //走る速さ
+        this.speed = 0;
+    }
+
+    count(level) {
+        /*
+        フレームごとの処理
+        親クラスのオーバーライド
+        */
+        super.count();
+
+        //速さ更新
+        this.speed = level + 1;
+
+        //x座標の更新
+        this.x -= this.speed;
+    }  
+}
 
 class Flower extends Runner{
     /*
     花のクラス
     */
     
-    init_animation() {
+    setting() {
         /*
-        アニメーションの設定
-        親クラスのオーバーライド
+        設定
         */
-        this.animation_height = 16;
-        this.animation_width = 16;
-
         this.animation = [[
             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -39,24 +63,13 @@ class Bird extends Runner{
     /*
     鳥のクラス
     */
-
-    init_xy() {
-        /*
-        xyの初期位置の設定
-        親クラスのオーバーライド
-        */
-        super.init_xy()
-        this.init_y = 16;
-    }
     
-    init_animation() {
+    setting() {
         /*
-        アニメーションの設定
-        親クラスのオーバーライド
+        設定
         */
+        this.init_y = 16;
         this.animation_speed = 10;
-        this.animation_height = 16;
-        this.animation_width = 16;
 
         this.animation = [[
                 [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -98,19 +111,14 @@ class Bird extends Runner{
 
 class EnemyCat extends Runner{
     /*
-    花のクラス
+    敵ﾈｺﾁｬﾝのクラス
     */
     
-    init_animation() {
+    setting() {
         /*
-        アニメーションの設定
-        親クラスのオーバーライド
+        設定
         */
-        this.animation_speed = 5;
-        this.animation_height = 16;
-        this.animation_width = 16;
 
-        
         this.animation = [[
             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],

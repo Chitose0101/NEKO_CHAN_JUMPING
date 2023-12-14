@@ -1,6 +1,6 @@
-class Cat extends Entity{
+class Jumper extends Entity{
     /*
-    ﾈｺﾁｬﾝのクラス
+    ジャンプするエンティティの親クラス
     */
 
     constructor(display_height, display_width, xy) {
@@ -80,16 +80,24 @@ class Cat extends Entity{
         //y座標の更新
         this.y = this.display_height - this.height - this.jump_height() - 1;
     }
+}
 
-    init_animation() {
+class Cat extends Jumper{
+    /*
+    ﾈｺﾁｬﾝのクラス
+    */
+
+    setting() {
         /*
-        アニメーションの設定
-        親クラスのオーバーライド
+        設定
         */
-        this.animation_speed = 5;
-        this.animation_height = 16;
-        this.animation_width = 16;
 
+        //初期位置x
+        this.init_x = 16;
+        //アニメーションの速さ
+        this.animation_speed = 5;
+
+        //アニメーション
         this.animation = [[
                 [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
                 [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -124,19 +132,9 @@ class Cat extends Entity{
                 [0,1,2,2,2,2,2,1,0,0,0,0,0,0,0,0],
                 [0,1,1,2,1,2,1,1,0,0,0,0,0,0,0,0],
                 [0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0], 
-            ]
-        ];
-    }
+            ]];
 
-    init_collider() {
-        /*
-        コライダーの設定
-        親クラスのオーバーライド
-        */
-        this.collider_height = 16;
-        this.collider_width = 16;
-
-        //コライダーの設定
+        //コライダー
         this.collider = [[
                 [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
                 [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
