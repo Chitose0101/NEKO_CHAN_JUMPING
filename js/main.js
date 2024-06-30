@@ -2,70 +2,44 @@
 メインのコード
 */
 
-//画面設定
+//描画更新の速さ
+const fps = 40;
+//ドットの数
 const boardRow = 70;
 const boardCol = 170;
-const fps = 40;
+//仮のドットサイズ(ゲーム画面のドットの数に合わせて、ドットサイズを変える)
+let blockSize = 1;
 
 //キャンバスの取得
 const cvs = document.getElementById("cvs");
-//コンテキスト生成
-const ctx = cvs.getContext("2d");
-//仮のドットサイズ
-let blockSize = 1;
+//ゲームの生成
+const game = new Game(boardRow, boardCol)
+//ゲーム画面の作成
+const glaphic = new Glaphic(game, cvs, blockSize);
 
-//ゲーム生成
-const game = new Game(boardRow, boardCol);
-//グラフィック作成
-const glaphic = new Glaphic(boardRow, boardCol, blockSize);
-
-//待機画面か
-let standby = true;
 
 function click_event() {
     /*
     クリックorタップしたときのイベント
     */
-
-    //もしゲームが開始していれば、ジャンプする
-    if (game.is_running) {
-        game.entities.cat.jump();
-
-    } else {
-        //ゲームオーバーから0.5秒経っていたら
-        if (Date.now() - game.gameover_timestump > 500) {
-            //待機画面解除
-            standby = false;
-            //ゲームリセット、スタート
-            game.reset();
-            game.start();
-        }
-    }
+   game.click_event()
 }
 
-function count() {
+
+function timing_event() {
     /*
     毎フレーム行われるイベント
     */
-
-    //ゲームが開始していなければ、なにもしない
-    if (game.is_running == false) {
-        return;
-    }
-
-    //ゲーム進行
-    game.count();
-
-    //ゲームオーバーの処理
-    game.gameover();
-
+    //ゲーム更新
+    game.timing_event()
     //描画
     draw()
 }
 
+
 function draw() {
     /*
-    キャンバスの描画
+    キャンバスの更新
     */
 
     //ドットサイズ、キャンバスサイズの設定
@@ -83,10 +57,10 @@ function draw() {
     //グラフィックのブロックサイズ更新
     glaphic.set_blockSize(blockSize);
 
-    //描画
-    glaphic.draw_game(game.entities.entities, ctx);
-    glaphic.draw_info(game.level, game.score, standby, game.is_over, ctx)
+    //ゲーム画面の描画
+    glaphic.draw()
 }
+
 
 function init() {
     /*
@@ -99,11 +73,9 @@ function init() {
     const _click = (window.ontouchstart === undefined)? "mousedown" : "touchstart";
     window.addEventListener(_click, click_event);
 
-    //描画
-    draw();
-
     //インターバル開始
-    setInterval(count, 1000/fps);
+    setInterval(timing_event, 1000/fps);
 }
+
 
 window.onload = init();

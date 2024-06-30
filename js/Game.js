@@ -1,20 +1,19 @@
 class Game {
     /*
-    ゲーム画面を司るクラス
+    ゲーム進行を司るクラス
     */
 
     constructor(height, width) {
         /*
         コントラスタ
-        height:画面の縦サイズ
-        width:画面の横サイズ
+        height:縦サイズ
+        width:横サイズ
         */
         this.height = height;
         this.width = width;
-
-        //ゲームオーバーのタイムスタンプ
-        this.gameover_timestump = Date.now();
-
+        //待機中か
+        this.is_standby = true;
+        //ゲームの初期化
         this.reset();
     }
 
@@ -23,58 +22,83 @@ class Game {
         ゲームを初期化するときの関数
         */
 
-        //ゲームが開始しているかのフラグ
+        //ゲームが動いているかのフラグ
         this.is_running = false;
         //ゲームオーバーかどうかのフラグ
-        this.is_over = false;
-
+        this.is_over = true;
         //ゲーム開始から何フレーム経過したか
         this.timer = 0;
-
         //レベル、スコア
-        this.level = 0;
+        this.level = 1;
         this.score = 0;
-
-        //エンティティ配置
-        this.entities = new EntityManager(this.height, this.width)
+        //ゲームオーバーのタイムスタンプ
+        this.gameover_timestump = Date.now();
+        //エンティティの配置
+        this.entities = new Entities(this.height, this.width);
     }
 
     start() {
         /*
         ゲームを開始する
         */
+        this.is_standby = false;
         this.is_running = true;
+        this.is_over = false;
+        
     }
 
-    count() {
+    click_event() {
+        /*
+        クリックorタップしたときのイベント
+        */
+        //もしゲームが動いていれば、エンティティを動かす
+        if (game.is_running) {
+            game.entities.click_event();
+
+        } else {
+            //ゲームオーバーから0.5秒以内なら何もしない
+            if (Date.now() - game.gameover_timestump < 500) {
+                return
+            }
+            //ゲームリセット、スタート
+            game.reset();
+            game.start();
+        }
+    }
+
+    timing_event() {
         /*
         ゲーム進行
         */
 
-        //スコア更新
-        this.score_up();
+        //もしゲームが動いていなければ何もしない
+        if (game.is_running == false) {
+            return
+        }
+        
+        //タイマー更新
+        this.timer ++;
 
         //敵リストの更新
         this.entities.update_enemies(this.level);
-
         //各エンティティにフレームごとの処理をさせる
-        for (let i = 0; i < this.entities.entities.length; i++) {
-            this.entities.entities[i].count(this.level);
+        this.entities.timing_event(this.level);
+
+        //ゲームオーバーの処理
+        this.is_over = this.entities.check_gameover()
+        if (this.is_over) {
+            this.gameover()
         }
 
-        //タイマー更新
-        this.timer ++;
+        //スコア更新
+        this.score_up();
     }
 
     score_up() {
         /*
         スコア更新
         */
-
-        //0.15秒で1増加
         this.score = parseInt(this.timer/6);
-
-        //レベルアップ
         this.level_up();
     }
 
@@ -82,19 +106,12 @@ class Game {
         /*
         レベルアップ
         */
-
-        //レベル10まで
-        if (this.level >= 10) {
-            return;
+        
+        if (this.score > 1000) {
+            this.level = 10
+        } else {
+            this.level = Math.floor(this.score/100) + 1
         }
-
-        //100ごとにレベルアップ
-        if (this.timer % 600 > 0) {
-            return;
-        }
-
-        //レベル増加
-        this.level ++;
     }
 
     gameover() {
@@ -102,48 +119,13 @@ class Game {
         ゲームオーバーのときの処理
         */
 
-        //ゲームオーバーかどうかの更新、誰がﾈｺﾁｬﾝを倒したか
-        const killer = this.who_cat_kill()
-
-        //ゲームオーバーでなければ、何もしない
-        if (this.is_over == false) {
-            return;
-        }
-
         //もしﾈｺﾁｬﾝどうしだったら、ハートをつける
-        if (killer instanceof EnemyCat){
+        if (this.entities.killer instanceof EnemyCat){
             this.entities.add_heart();
         }
 
         this.gameover_timestump = Date.now();
+        this.is_over = true;  
         this.is_running = false;
     }
-
-    who_cat_kill() {
-        /*
-        ﾈｺﾁｬﾝが誰に倒されたか判定する
-        is_overの更新
-        */
-        let killer = undefined;
-        
-        //すべてのﾈｺﾁｬﾝ座標について
-        for (let y = this.entities.cat.y; y < this.entities.cat.y + this.entities.cat.collider_height; y++) {
-            for (let x = this.entities.cat.x; x < this.entities.cat.x + this.entities.cat.collider_width; x++) {
-                //ﾈｺﾁｬﾝがいるか
-                if (this.entities.cat.exists(x,y)){
-                    //すべての敵について
-                    for (let i = 0; i < this.entities.enemies.length; i++) {
-                        //敵がいるか
-                        if (this.entities.enemies[i].exists(x,y)){
-                            killer = this.entities.enemies[i];                  
-                        }
-                    }
-                }
-            }
-        }
-
-        this.is_over = killer != undefined;
-        return killer;
-    }
-
 }

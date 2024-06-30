@@ -3,26 +3,28 @@ class Jumper extends Entity{
     ジャンプするエンティティの親クラス
     */
 
-    constructor(display_height, display_width, xy) {
+    constructor(display_height, x) {
         /*
         コントラスタ
         */
-        super(display_height, display_width, xy);
-
+        super(x);
+        this.display_height = display_height
+        this.set_xy(this.x, this.display_height - this.height - 1)
         //ジャンプ中か
         this.is_jumping = false;
         //ジャンプしてから何フレーム経過したか
         this.jump_timer = 0;
     }
 
-    jump() {
+    click_event() {
         /*
-        ジャンプ
+        クリック時のイベント
         */
+        //ジャンプする
         this.is_jumping = true;
     }
 
-    jump_height(jump_timer=this.jump_timer) {
+    calculate_jump_height(jump_timer = this.jump_timer) {
         /*
         ジャンプの高さを算出
         */
@@ -32,7 +34,12 @@ class Jumper extends Entity{
         const v = 9;
         let t = jump_timer;
 
-        return parseInt(v*t - g*t*t/2);
+        const jump_height = parseInt(v*t - g*t*t/2);
+        if (jump_height > 0) {
+            return jump_height
+        } else {
+            return 0
+        }
     }
 
     count_jump_timer() {
@@ -46,7 +53,7 @@ class Jumper extends Entity{
         }
         
         //もし次の高さが0より高ければ、増加
-        if (this.jump_height(this.jump_timer + 1) > 0) {
+        if (this.calculate_jump_height(this.jump_timer + 1) > 0) {
             this.jump_timer += 1;
 
         //そうでなければ、0
@@ -56,18 +63,17 @@ class Jumper extends Entity{
         }
     }
 
-    count() {
+    timing_event() {
         /*
         フレームごとの処理
-        親クラスのオーバーライド
         */
-        super.count();
+        super.timing_event();
 
         //jump_timerの更新
         this.count_jump_timer();
 
         //y座標の更新
-        this.y = this.display_height - this.height - this.jump_height() - 1;
+        this.y = this.display_height - this.height - 1 - this.calculate_jump_height();
     }
 }
 
@@ -76,7 +82,14 @@ class Cat extends Jumper{
     ﾈｺﾁｬﾝのクラス
     */
 
-    setting() {
+    constructor(display_height, x) {
+        /*
+        コントラスタ
+        */
+        super(display_height, x);
+    }
+
+    set_collider() {
         /*
         設定
         */
@@ -123,8 +136,7 @@ class Cat extends Jumper{
                 [0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0], 
             ]];
 
-        //コライダー
-        this.collider = [[
+            this.collider = [[
                 [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
                 [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
                 [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -159,5 +171,8 @@ class Cat extends Jumper{
                 [0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0],
                 [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
         ]];
+
+        //コライダーの補足
+        super.set_collider()
     }
 }
