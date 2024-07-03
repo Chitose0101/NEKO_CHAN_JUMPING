@@ -79,9 +79,7 @@ class Game {
         //タイマー更新
         this.timer ++;
 
-        //敵リストの更新
-        this.entities.update_entities(this.level);
-        //各エンティティにフレームごとの処理をさせる
+        //エンティティにフレームごとの処理をさせる
         this.entities.timing_event(this.level);
 
         //ゲームオーバーの処理
@@ -106,7 +104,6 @@ class Game {
         /*
         レベル更新
         */
-        
         if (this.score > 1000) {
             this.level = 10
         } else {

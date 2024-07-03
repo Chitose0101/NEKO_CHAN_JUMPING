@@ -10,13 +10,10 @@ class Entity {
         */
         this.x = x
         this.y = y
-
         //敵か
         this.is_enemy = true;
-
         //アニメーションの更新速度
         this.animation_speed = 0;
-
         //生成から何フレーム経過したか
         this.timer = 0;
         //アニメーションの現在のフレーム

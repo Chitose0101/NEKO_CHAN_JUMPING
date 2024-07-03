@@ -11,6 +11,8 @@ class Entities {
         */
         this.height = height;
         this.width = width;
+        //エンティティの集合
+        this.entities = new Set();
 
         this.reset();
     }
@@ -19,12 +21,10 @@ class Entities {
         /*
         エンティティの初期化
         */
-
-        //エンティティのリスト
-        this.entities=[];
+        this.entities.clear();
         //ﾈｺﾁｬﾝ生成
         this.cat = new Cat(this.height, 16);
-        this.entities.push(this.cat);
+        this.entities.add(this.cat);
         //誰が殺したか
         this.killer = null;
     }
@@ -33,18 +33,23 @@ class Entities {
         /*
         クリック時のイベント
         */
-        for (let i = 0; i < this.entities.length; i++) {
-            this.entities[i].click_event();
-        }
+        this.entities.forEach(function(entity){
+            entity.click_event();
+        })
     }
 
     timing_event(level) {
         /*
         フレームごとのイベント
         */
-        for (let i = 0; i < this.entities.length; i++) {
-            this.entities[i].timing_event(level);
-        }
+
+        //エンティティのリストの更新
+        this.update_entities(level)
+
+        //エンティティにフレームごとの処理をさせる
+        this.entities.forEach(function(entity){
+            entity.timing_event(level);
+         })
     }
 
     update_entities(level) {
@@ -54,23 +59,10 @@ class Entities {
 
         //画面外の敵を消す
         this.delete_outside_enemies();
-        
-        //更新後のエンティティリストの雛型
-        let updated_entities = [];
 
-        //エンティティリストの整理
-        for (let i = 0; i < this.entities.length; i++) {
-            if (this.entities[i] instanceof Entity) {
-                updated_entities.push(this.entities[i]);
-            }
-        }
-        this.entities = updated_entities;
-
-        //新しい敵を生成する
-        const new_enemy = this.spawn_enemy(level);
-        //新しい敵がいればリストに追加
-        if (new_enemy instanceof Entity) {
-            this.entities.push(new_enemy); 
+        //確率で新しい敵を生成する
+        if (this.check_spawnable(level)) {
+            this.spawn_enemy(level);
         }
     }
 
@@ -78,41 +70,51 @@ class Entities {
         /*
         画面外の敵を消す
         */
-        for (let i = 0; i < this.entities.length; i++) {
-            if (this.entities[i].is_enemy) {
-                if (this.entities[i].x + this.entities[i].width < 0) {
-                    delete this.entities[i];
+        this.entities.forEach(function(entity){
+            if (entity.is_enemy) {
+                if (entity.x + entity.width < 0) {
+                    this.entities.delete(entity);
                 }
             }
+         }, this)
+    }
+
+    check_spawnable(level) {
+        /*
+        敵を生成するか
+        boolean
+        */
+
+        //もし近くに敵がいれば、何もしない
+        let closed_enemy = null
+        this.entities.forEach(function(entity){
+            if (entity.is_enemy) {
+                let interval = this.cat.collider_width * 2.5 + entity.collider_width * level;
+                if (this.width - entity.x < interval  + entity.collider_width) {
+                    closed_enemy = entity;
+                }
+            }
+         }, this)
+         if (closed_enemy instanceof Entity) {
+            return false;
+         }
+
+        //確率でスポーン
+        let probabillity = 1/20;
+        let random = Math.random();
+        if (random > probabillity) {
+            return false;
         }
+
+        return true;
     }
 
     spawn_enemy(level) {
         /*
         敵を生成する
-        Entity
         */
-        
-        //もし近くに敵がいれば、何もしない
-        for (let i = 0; i < this.entities.length; i++) {
-            if (this.entities[i].is_enemy) {
-                let interval = this.cat.collider_width * 2.5 + this.entities[i].collider_width * level;
-                if (this.width - this.entities[i].x < interval  + this.entities[i].collider_width) {
-                    return;
-                }
-            }
-        }
-
-        //敵を生成するか決める
-        let probabillity = 1/20;
-        let random = Math.random();
-        if (random > probabillity) {
-            return;
-        }
-
-        //どの敵を生成するか決める
         let new_enemy = null
-        random = Math.random();
+        let random = Math.random();
         if (random < 0.01) {
             new_enemy = new EnemyCat(this.height, this.width, level);
         } else if (random < 0.2) {
@@ -125,7 +127,7 @@ class Entities {
             new_enemy = new Flower(this.height, this.width, level);
         }
 
-        return new_enemy;
+        this.entities.add(new_enemy);
     }
 
     check_gameover() {
@@ -153,21 +155,19 @@ class Entities {
     }
 
     exists_any_enemy(x, y) {
-         /*
+        /*
         いずれかの敵がいるか
         Entity
         */
-
-        //すべてのエンティティについて
-        for (let i = 0; i < this.entities.length; i++) {
-            //敵か
-            if (this.entities[i].is_enemy) {
-                if (this.entities[i].exists(x, y)){
-                    return this.entities[i];         
+        let killer = null
+        this.entities.forEach(function(entity){
+            if (entity.is_enemy) {
+                if (entity.exists(x, y)) {
+                    killer =entity;
                 }
             }
-        }
-        return null;
+         })
+        return killer;
     }
 
     add_heart() {
@@ -181,6 +181,6 @@ class Entities {
             this.cat.x + this.cat.animation_width - 5,
             this.cat.y - heart.animation_height + 2
             );
-        this.entities.push(heart);
+        this.entities.add(heart);
     }
 }

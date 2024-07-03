@@ -34,9 +34,9 @@ class Glaphic {
         this.clear();
 
         //エンティティの描画
-        for (let i = 0; i < this.game.entities.entities.length; i++) {
-            this.draw_entity(this.game.entities.entities[i]);
-        }
+        this.game.entities.entities.forEach(function(entity){
+            this.draw_entity(entity);
+        }, this)
 
         //地面の描画
         this.draw_floor();
@@ -137,7 +137,7 @@ class Glaphic {
             this.blockSize*y,
             this.blockSize*width,
             this.blockSize*height,
-            );
+        );
     }
 
     fill_dot(x, y, width, height) {
@@ -149,6 +149,6 @@ class Glaphic {
             this.blockSize*y,
             this.blockSize*width,
             this.blockSize*height
-            );
+        );
     }
 }
