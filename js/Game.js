@@ -13,6 +13,10 @@ class Game {
         this.width = width;
         //待機中か
         this.is_standby = true;
+        //ゲームオーバーのタイムスタンプ
+        this.gameover_timestump = Date.now();
+        //エンティティの配置
+        this.entities = new Entities(this.height, this.width);
         //ゲームの初期化
         this.reset();
     }
@@ -25,16 +29,14 @@ class Game {
         //ゲームが動いているかのフラグ
         this.is_running = false;
         //ゲームオーバーかどうかのフラグ
-        this.is_over = true;
+        this.is_over = false;
         //ゲーム開始から何フレーム経過したか
         this.timer = 0;
         //レベル、スコア
         this.level = 1;
         this.score = 0;
-        //ゲームオーバーのタイムスタンプ
-        this.gameover_timestump = Date.now();
-        //エンティティの配置
-        this.entities = new Entities(this.height, this.width);
+        //エンティティのリセット
+        this.entities.reset()
     }
 
     start() {
@@ -43,8 +45,6 @@ class Game {
         */
         this.is_standby = false;
         this.is_running = true;
-        this.is_over = false;
-        
     }
 
     click_event() {
@@ -80,12 +80,12 @@ class Game {
         this.timer ++;
 
         //敵リストの更新
-        this.entities.update_enemies(this.level);
+        this.entities.update_entities(this.level);
         //各エンティティにフレームごとの処理をさせる
         this.entities.timing_event(this.level);
 
         //ゲームオーバーの処理
-        this.is_over = this.entities.check_gameover()
+        this.is_over = this.check_gameover()
         if (this.is_over) {
             this.gameover()
         }
@@ -104,7 +104,7 @@ class Game {
 
     level_up() {
         /*
-        レベルアップ
+        レベル更新
         */
         
         if (this.score > 1000) {
@@ -113,6 +113,16 @@ class Game {
             this.level = Math.floor(this.score/100) + 1
         }
     }
+
+
+    check_gameover() {
+        /*
+        ゲームオーバーか確かめる
+        boolean
+        */
+        return this.entities.check_gameover()
+    }
+
 
     gameover() {
         /*

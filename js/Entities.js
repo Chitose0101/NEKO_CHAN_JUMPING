@@ -12,14 +12,21 @@ class Entities {
         this.height = height;
         this.width = width;
 
+        this.reset();
+    }
+
+    reset() {
+        /*
+        エンティティの初期化
+        */
+
+        //エンティティのリスト
+        this.entities=[];
         //ﾈｺﾁｬﾝ生成
         this.cat = new Cat(this.height, 16);
-        //敵リスト
-        this.enemies = [];
-        //エンティティのリスト
-        this.entities = [this.cat];
+        this.entities.push(this.cat);
         //誰が殺したか
-        this.killer = null
+        this.killer = null;
     }
 
     click_event() {
@@ -40,51 +47,59 @@ class Entities {
         }
     }
 
-    update_enemies(level) {
+    update_entities(level) {
         /*
-        敵の更新
+        エンティティのリストの更新
         */
 
-        //更新後の敵リストの雛型
-        let updated_enemies = [];
+        //画面外の敵を消す
+        this.delete_outside_enemies();
+        
+        //更新後のエンティティリストの雛型
+        let updated_entities = [];
+
+        //エンティティリストの整理
+        for (let i = 0; i < this.entities.length; i++) {
+            if (this.entities[i] instanceof Entity) {
+                updated_entities.push(this.entities[i]);
+            }
+        }
+        this.entities = updated_entities;
 
         //新しい敵を生成する
         const new_enemy = this.spawn_enemy(level);
-
-        //画面内にいる敵は引き継ぐ
-        for (let i = 0; i < this.enemies.length; i++) {
-            if (this.enemies[i].x + this.enemies[i].width >= 0) {
-                updated_enemies.push(this.enemies[i]);
-            } else {
-                delete this.enemies[i];
-            }
-        }
-
         //新しい敵がいればリストに追加
         if (new_enemy instanceof Entity) {
-            updated_enemies.push(new_enemy); 
+            this.entities.push(new_enemy); 
         }
-        
-        //更新
-        this.enemies = updated_enemies;
+    }
 
-        //エンティティリストの更新
-        this.entities = [this.cat];
-        for (let i = 0; i < this.enemies.length; i++) {
-            this.entities.push(this.enemies[i]);
+    delete_outside_enemies() {
+        /*
+        画面外の敵を消す
+        */
+        for (let i = 0; i < this.entities.length; i++) {
+            if (this.entities[i].is_enemy) {
+                if (this.entities[i].x + this.entities[i].width < 0) {
+                    delete this.entities[i];
+                }
+            }
         }
     }
 
     spawn_enemy(level) {
         /*
         敵を生成する
+        Entity
         */
         
         //もし近くに敵がいれば、何もしない
-        for (let i = 0; i < this.enemies.length; i++) {
-            let interval = this.cat.collider_width * 2.5 + this.enemies[i].collider_width * level;
-            if (this.width - this.enemies[i].x < interval  + this.enemies[i].collider_width) {
-                return;
+        for (let i = 0; i < this.entities.length; i++) {
+            if (this.entities[i].is_enemy) {
+                let interval = this.cat.collider_width * 2.5 + this.entities[i].collider_width * level;
+                if (this.width - this.entities[i].x < interval  + this.entities[i].collider_width) {
+                    return;
+                }
             }
         }
 
@@ -116,26 +131,43 @@ class Entities {
     check_gameover() {
         /*
         ゲームオーバーの判定、死因の更新
+        boolean
         */
         
         //すべてのﾈｺﾁｬﾝ座標について
         for (let y = this.cat.y; y < this.cat.y + this.cat.collider_height; y++) {
             for (let x = this.cat.x; x < this.cat.x + this.cat.collider_width; x++) {
                 //ﾈｺﾁｬﾝがいるか
-                if (this.cat.exists(x,y)){
-                    //すべての敵について
-                    for (let i = 0; i < this.enemies.length; i++) {
-                        //敵がいるか
-                        if (this.enemies[i].exists(x,y)){
-                            this.killer = this.enemies[i];
-                            return true               
-                        }
+                if (this.cat.exists(x, y)){
+                    //いずれかの敵がいるか
+                    let enemy = this.exists_any_enemy(x, y);
+                    if (this.exists_any_enemy(x, y) instanceof Entity ) {
+                        this.killer = enemy;
+                        return true;
                     }
                 }
             }
         }
 
         return false;
+    }
+
+    exists_any_enemy(x, y) {
+         /*
+        いずれかの敵がいるか
+        Entity
+        */
+
+        //すべてのエンティティについて
+        for (let i = 0; i < this.entities.length; i++) {
+            //敵か
+            if (this.entities[i].is_enemy) {
+                if (this.entities[i].exists(x, y)){
+                    return this.entities[i];         
+                }
+            }
+        }
+        return null;
     }
 
     add_heart() {

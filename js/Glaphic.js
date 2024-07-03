@@ -25,68 +25,86 @@ class Glaphic {
         this.blockSize = blockSize
     }
 
-    draw() {
+    draw_game() {
         /*
         ゲーム画面の描写
         */
 
-        //長くなるのでよく使う単語を略す
-        const ctx = this.ctx
-        const h = this.game.height
-        const w = this.game.width
-        const bs = this.blockSize
-        const es = this.game.entities.entities
-
         //キャンバスの初期化
         this.clear();
 
-        //地面の描画
-        this.ctx.fillRect(0, bs*(h-1), bs*w, bs);
-        
         //エンティティの描画
-        for (let i = 0; i < es.length; i++) {
-            this.draw_entity(es[i])
+        for (let i = 0; i < this.game.entities.entities.length; i++) {
+            this.draw_entity(this.game.entities.entities[i]);
         }
 
-        //待機画面のとき
+        //地面の描画
+        this.draw_floor();
+
+        //右上に描くもの
+        let ur = "";
         if (this.game.is_standby) {
-            let tap_to_start = new Chars("TAP TO START");
-            //右上揃えにする
-            tap_to_start.set_xy(w - tap_to_start.width, 0);
-            this.draw_entity(tap_to_start);
-            return;
+            ur = "TAP TO START";
+        } else {
+            ur = this.create_level_and_score();
         }
+        this.set_char_ur(ur);
 
-        //ゲームオーバーのとき
+        //中央にゲームオーバー
         if (this.game.is_over) {
-            let gameover_chars = new Chars("GAMEOVER");
-            //中央揃えにする
-            gameover_chars.set_xy(
-                parseInt((w - gameover_chars.width) * 0.5),
-                parseInt((h - gameover_chars.height) * 0.5)
-                );
-            this.draw_entity(gameover_chars, ctx);
+            this.set_char_mm("GAMEOVER")
         }
-
-        //scoreの桁数調整
-        let score_string = ""
-        for (let i = 0; i < 4 - String(this.game.score).length; i++) {
-            score_string += "0";
-        }
-        score_string += String(this.game.score);
-        
-        let level_and_score = new Chars(
-            "LEVEL" + String(this.game.level) + " SCORE " + score_string);
-        //右上揃えにする
-        level_and_score.set_xy(w - level_and_score.width, 0);
-        this.draw_entity(level_and_score);
     }
 
     clear() {
         /*
         キャンバスの初期化
         */
-        this.ctx.clearRect(0, 0, this.blockSize*this.game.width, this.blockSize*this.game.height);
+        this.clear_dot(0, 0, this.game.width, this.game.height);
+    }
+
+    draw_floor() {
+        /*
+        地面の描画
+        */
+        this.fill_dot(0, this.game.height - 1, this.game.width, 1);
+    }
+
+    create_level_and_score() {
+        /*
+        level,scoreの文字列作成
+        string
+        */
+        let score_string = ""
+        for (let i = 0; i < 4 - String(this.game.score).length; i++) {
+            score_string += "0";
+        }
+        score_string += String(this.game.score);
+        
+        return "LEVEL" + String(this.game.level) + " SCORE " + score_string
+    }
+
+    set_char_ur(src) {
+        /*
+        右上に文字を表示する
+        src文字列
+        */
+        let chars = new Chars(src);
+        chars.set_xy(this.game.width - chars.width, 0);
+        this.draw_entity(chars);
+    }
+
+    set_char_mm(src) {
+        /*
+        中央に文字を表示する
+        src文字列
+        */
+        let chars = new Chars(src);
+        chars.set_xy(
+            parseInt((this.game.width - chars.width) * 0.5),
+            parseInt((this.game.height - chars.height) * 0.5)
+            );
+        this.draw_entity(chars);
     }
 
     draw_entity(entity) {
@@ -101,12 +119,36 @@ class Glaphic {
                 let color = entity.color(x,y);
                 //黒
                 if (color == 1) {
-                    this.ctx.fillRect(this.blockSize*x, this.blockSize*y, this.blockSize, this.blockSize);
+                    this.fill_dot(x, y, 1, 1);
                 //白
                 } else if (color == 2) {
-                    this.ctx.clearRect(this.blockSize*x, this.blockSize*y, this.blockSize, this.blockSize);
+                    this.clear_dot(x, y, 1, 1);
                 }
             }
         }
+    }
+
+    clear_dot(x, y, width, height) {
+        /*
+        ドットに合わせて長方形に消す
+        */
+        this.ctx.clearRect(
+            this.blockSize*x,
+            this.blockSize*y,
+            this.blockSize*width,
+            this.blockSize*height,
+            );
+    }
+
+    fill_dot(x, y, width, height) {
+        /*
+        ドットに合わせて長方形に塗る
+        */
+        this.ctx.fillRect(
+            this.blockSize*x,
+            this.blockSize*y,
+            this.blockSize*width,
+            this.blockSize*height
+            );
     }
 }

@@ -10,6 +10,8 @@ class Jumper extends Entity{
         super(x);
         this.display_height = display_height
         this.set_xy(this.x, this.display_height - this.height - 1)
+        //敵でない
+        this.is_enemy = false;
         //ジャンプ中か
         this.is_jumping = false;
         //ジャンプしてから何フレーム経過したか

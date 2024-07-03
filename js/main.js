@@ -58,7 +58,7 @@ function draw() {
     glaphic.set_blockSize(blockSize);
 
     //ゲーム画面の描画
-    glaphic.draw()
+    glaphic.draw_game()
 }
 
 

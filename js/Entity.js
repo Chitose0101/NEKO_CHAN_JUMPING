@@ -11,6 +11,9 @@ class Entity {
         this.x = x
         this.y = y
 
+        //敵か
+        this.is_enemy = true;
+
         //アニメーションの更新速度
         this.animation_speed = 0;
 
